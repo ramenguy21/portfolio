@@ -1,84 +1,15 @@
-import React, {
-  useState,
-  type ReactNode,
-  type MouseEventHandler,
-  type ElementType,
-} from "react";
-import { Github, Mail, Phone, ExternalLink, Code, Menu, X } from "lucide-react";
-
-// Button Props
-type ButtonProps = {
-  children: ReactNode;
-  variant?: "primary" | "secondary" | "outline";
-  href?: string;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  className?: string;
-};
-
-// Reusable Button Component
-const Button: React.FC<ButtonProps> = ({
-  children,
-  variant = "primary",
-  href,
-  onClick,
-  className = "",
-}) => {
-  const baseClasses =
-    "px-6 py-3 rounded-lg font-medium transition-all duration-300 inline-flex items-center gap-2";
-  const variants = {
-    primary:
-      "bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl",
-    secondary:
-      "bg-gray-800 hover:bg-gray-700 text-white border border-gray-700",
-    outline:
-      "border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white",
-  };
-
-  const classes = `${baseClasses} ${variants[variant]} ${className}`;
-
-  if (href) {
-    return (
-      <a
-        href={href}
-        className={classes}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {children}
-      </a>
-    );
-  }
-
-  return (
-    <button onClick={onClick} className={classes}>
-      {children}
-    </button>
-  );
-};
-
-// Card Props
-type CardProps = {
-  children: ReactNode;
-  className?: string;
-  hover?: boolean;
-};
-
-// Reusable Card Component
-const Card: React.FC<CardProps> = ({
-  children,
-  className = "",
-  hover = true,
-}) => {
-  return (
-    <div
-      className={`bg-white rounded-xl shadow-lg p-6 ${
-        hover ? "hover:shadow-xl transition-shadow duration-300" : ""
-      } ${className}`}
-    >
-      {children}
-    </div>
-  );
-};
+import React, { useState, type ReactNode } from "react";
+import { Github, Mail, Phone, Code, Menu, X } from "lucide-react";
+import Button from "./components/button";
+import Card from "./components/card";
+import SkillBadge from "./components/badge";
+import ExperienceCard from "./components/exp-card";
+import ProjectCard from "./components/project-card";
+import { useBlogPosts } from "./utils/useBlogPosts";
+import Blog from "./components/blog";
+import Header from "./components/header";
+import Footer from "./components/footer";
+import { useNavigate } from "react-router-dom";
 
 // Section Props
 type SectionProps = {
@@ -104,172 +35,6 @@ const Section: React.FC<SectionProps> = ({
         {children}
       </div>
     </section>
-  );
-};
-
-// Skill Badge Props
-type SkillBadgeProps = {
-  skill: string;
-  icon?: ElementType;
-};
-
-// Skill Badge Component
-const SkillBadge: React.FC<SkillBadgeProps> = ({ skill, icon: Icon }) => {
-  return (
-    <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-2 rounded-full border border-blue-200">
-      {Icon && <Icon size={16} className="text-blue-600" />}
-      <span className="text-gray-700 font-medium">{skill}</span>
-    </div>
-  );
-};
-
-// Experience Card Props
-type ExperienceCardProps = {
-  title: string;
-  company: string;
-  period: string;
-  description: string[];
-  technologies?: string[];
-};
-
-// Experience Card Component
-const ExperienceCard: React.FC<ExperienceCardProps> = ({
-  title,
-  company,
-  period,
-  description,
-  technologies,
-}) => {
-  return (
-    <Card className="mb-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-        <div>
-          <h3 className="text-xl font-bold text-gray-800">{title}</h3>
-          <p className="text-blue-600 font-medium">{company}</p>
-        </div>
-        <span className="text-gray-500 font-medium mt-2 md:mt-0">{period}</span>
-      </div>
-      <ul className="text-gray-600 mb-4 space-y-2">
-        {description.map((item, index) => (
-          <li key={index} className="flex items-start gap-2">
-            <span className="text-blue-600 mt-1">•</span>
-            {item}
-          </li>
-        ))}
-      </ul>
-      {technologies && (
-        <div className="flex flex-wrap gap-2">
-          {technologies.map((tech, index) => (
-            <span
-              key={index}
-              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
-      )}
-    </Card>
-  );
-};
-
-// Project Card Props
-type ProjectCardProps = {
-  title: string;
-  description: string;
-  technologies: string[];
-  link?: string;
-};
-
-// Project Card Component
-const ProjectCard: React.FC<ProjectCardProps> = ({
-  title,
-  description,
-  technologies,
-  link,
-}) => {
-  return (
-    <Card className="h-full">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-bold text-gray-800">{title}</h3>
-        {link && (
-          <Button variant="outline" href={link} className="p-2">
-            <ExternalLink size={16} />
-          </Button>
-        )}
-      </div>
-      <p className="text-gray-600 mb-4">{description}</p>
-      <div className="flex flex-wrap gap-2">
-        {technologies.map((tech, index) => (
-          <span
-            key={index}
-            className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
-          >
-            {tech}
-          </span>
-        ))}
-      </div>
-    </Card>
-  );
-};
-
-// Navigation Component
-const Navigation: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const navItems = [
-    { href: "#home", label: "Home" },
-    { href: "#about", label: "About" },
-    { href: "#experience", label: "Experience" },
-    { href: "#projects", label: "Projects" },
-    { href: "#skills", label: "Skills" },
-    { href: "#contact", label: "Contact" },
-  ];
-
-  return (
-    <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-sm z-50 shadow-sm">
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
-          <div className="font-bold text-xl text-gray-800">
-            Muhammad Hamza Asad
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-gray-600 hover:text-blue-600 transition-colors duration-300"
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <div className="md:hidden py-4">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="block py-2 text-gray-600 hover:text-blue-600 transition-colors duration-300"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-        )}
-      </div>
-    </nav>
   );
 };
 
@@ -312,7 +77,10 @@ const Hero: React.FC = () => {
 
 // Main Portfolio Component
 const App: React.FC = () => {
-  const experiences: ExperienceCardProps[] = [
+  const posts = useBlogPosts();
+  const navigate = useNavigate();
+
+  const experiences = [
     {
       title: "Fullstack Developer",
       company: "Farmevo, Pakistan",
@@ -343,7 +111,7 @@ const App: React.FC = () => {
     },
   ];
 
-  const projects: ProjectCardProps[] = [
+  const projects = [
     {
       title: "Huffman Encoding Image Compression",
       description:
@@ -382,7 +150,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation />
+      <Header />
       <Hero />
 
       <Section id="about" title="About Me" className="bg-white">
@@ -471,11 +239,35 @@ const App: React.FC = () => {
         </div>
       </Section>
 
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="container mx-auto px-6 text-center">
-          <p>&copy; 2025 Muhammad Hamza Asad. All rights reserved.</p>
+      <Section id="blog-preview" title="Blog">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="flex flex-col gap-6 mb-8">
+            {posts.slice(0, 2).map((post) => (
+              <div
+                key={post.slug}
+                className="bg-white rounded-lg shadow p-4 text-left"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {post.title}
+                  </h3>
+                  <span className="text-xs text-gray-500">{post.date}</span>
+                </div>
+                <p className="text-gray-600">
+                  {post.content
+                    .split("\n")
+                    .find((line) => line.trim())
+                    ?.slice(0, 100)}
+                  ...
+                </p>
+              </div>
+            ))}
+          </div>
+          <Button onClick={() => navigate("/blog")}>View All Blog Posts</Button>
         </div>
-      </footer>
+      </Section>
+
+      <Footer />
     </div>
   );
 };
