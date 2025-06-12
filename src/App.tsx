@@ -1,12 +1,11 @@
-import React, { useState, type ReactNode } from "react";
-import { Github, Mail, Phone, Code, Menu, X } from "lucide-react";
+import React, { type ReactNode } from "react";
+import { Github, Mail, Phone, Code } from "lucide-react";
 import Button from "./components/button";
 import Card from "./components/card";
 import SkillBadge from "./components/badge";
 import ExperienceCard from "./components/exp-card";
 import ProjectCard from "./components/project-card";
 import { useBlogPosts } from "./utils/useBlogPosts";
-import Blog from "./components/blog";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import { useNavigate } from "react-router-dom";

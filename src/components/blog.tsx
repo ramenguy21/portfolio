@@ -4,49 +4,112 @@ import { useBlogPosts } from "../utils/useBlogPosts";
 import remarkGfm from "remark-gfm";
 
 const markdownComponents = {
-  h1: ({ children }: { children: React.ReactNode }) => (
-    <h1 className="text-3xl md:text-4xl font-bold text-blue-700 mb-4">
-      {children}
+  h1: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h1
+      {...props}
+      className={
+        "text-3xl md:text-4xl font-bold text-blue-700 mb-4" +
+        (props.className ? " " + props.className : "")
+      }
+    >
+      {props.children}
     </h1>
   ),
-  h2: ({ children }: { children: React.ReactNode }) => (
-    <h2 className="text-2xl md:text-3xl font-semibold text-blue-600 mb-3">
-      {children}
+  h2: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h2
+      {...props}
+      className={
+        "text-2xl md:text-3xl font-semibold text-blue-600 mb-3" +
+        (props.className ? " " + props.className : "")
+      }
+    >
+      {props.children}
     </h2>
   ),
-  h3: ({ children }: { children: React.ReactNode }) => (
-    <h3 className="text-xl md:text-2xl font-semibold text-blue-500 mb-2">
-      {children}
+  h3: (props: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h3
+      {...props}
+      className={
+        "text-xl md:text-2xl font-semibold text-blue-500 mb-2" +
+        (props.className ? " " + props.className : "")
+      }
+    >
+      {props.children}
     </h3>
   ),
-  p: ({ children }: { children: React.ReactNode }) => (
-    <p className="text-gray-700 mb-4 leading-relaxed">{children}</p>
+  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => (
+    <p
+      {...props}
+      className={
+        "text-gray-700 mb-4 leading-relaxed" +
+        (props.className ? " " + props.className : "")
+      }
+    >
+      {props.children}
+    </p>
   ),
-  ul: ({ children }: { children: React.ReactNode }) => (
-    <ul className="list-disc list-inside mb-4 text-gray-700">{children}</ul>
+  ul: (props: React.HTMLAttributes<HTMLUListElement>) => (
+    <ul
+      {...props}
+      className={
+        "list-disc list-inside mb-4 text-gray-700" +
+        (props.className ? " " + props.className : "")
+      }
+    >
+      {props.children}
+    </ul>
   ),
-  ol: ({ children }: { children: React.ReactNode }) => (
-    <ol className="list-decimal list-inside mb-4 text-gray-700">{children}</ol>
+  ol: (props: React.HTMLAttributes<HTMLOListElement>) => (
+    <ol
+      {...props}
+      className={
+        "list-decimal list-inside mb-4 text-gray-700" +
+        (props.className ? " " + props.className : "")
+      }
+    >
+      {props.children}
+    </ol>
   ),
-  li: ({ children }: { children: React.ReactNode }) => (
-    <li className="mb-1">{children}</li>
+  li: (props: React.LiHTMLAttributes<HTMLLIElement>) => (
+    <li
+      {...props}
+      className={"mb-1" + (props.className ? " " + props.className : "")}
+    >
+      {props.children}
+    </li>
   ),
-  a: ({ href, children }: { href?: string; children: React.ReactNode }) => (
+  a: (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a
-      href={href}
-      className="text-blue-600 underline hover:text-blue-800"
+      {...props}
+      className={
+        (props.className ? props.className + " " : "") +
+        "text-blue-600 underline hover:text-blue-800"
+      }
       target="_blank"
       rel="noopener noreferrer"
     >
-      {children}
+      {props.children}
     </a>
   ),
-  code: ({ children }: { children: React.ReactNode }) => (
-    <code className="px-1 rounded text-sm">{children}</code>
+  code: (props: React.HTMLAttributes<HTMLElement>) => (
+    <code
+      {...props}
+      className={`px-1 rounded text-sm${
+        props.className ? " " + props.className : ""
+      }`}
+    >
+      {props.children}
+    </code>
   ),
-  pre: ({ children }: { children: React.ReactNode }) => (
-    <pre className="bg-gray-900 text-gray-100 rounded p-4 overflow-x-auto mb-4">
-      {children}
+  pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
+    <pre
+      {...props}
+      className={
+        "bg-gray-900 text-gray-100 rounded p-4 overflow-x-auto mb-4" +
+        (props.className ? " " + props.className : "")
+      }
+    >
+      {props.children}
     </pre>
   ),
 };
