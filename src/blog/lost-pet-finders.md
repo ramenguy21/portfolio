@@ -7,7 +7,7 @@ Losing a pet is stressful, and finding them shouldn’t be harder than it needs 
 
 ## The Core Concept
 
-At its heart, LPF is about community-driven pet recovery service. The platform combines two main data sources:
+At its heart, LPF is about community-driven pet recovery. The platform combines two main data sources:
 
 - **Spots:** Human-submitted sightings of pets, with details and location.
 - **Devices:** Geotag hardware (think Bluetooth beacons or GSM modules) attached to pets for real-time tracking.
@@ -64,3 +64,5 @@ The market for animal tracking is growing fast (CAGR is worth a look). There are
 These are industry-grade products, so it’s worth researching how long they’ve been around and what their market share looks like.
 
 This is still a work in progress, but I’m excited about the potential. If you have ideas, want to collaborate, or just want to chat about lost pets and tech, let me know!
+
+As always, [here](https://github.com/ramenguy21/lostpetfinders/tree/dev) is the link to everything I've worked on for this project.

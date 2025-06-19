@@ -3,12 +3,12 @@ import { Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const navItems = [
-  { href: "#home", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#experience", label: "Experience" },
-  { href: "#projects", label: "Projects" },
-  { href: "#skills", label: "Skills" },
-  { href: "#contact", label: "Contact" },
+  { href: "/", label: "Home" },
+  { href: "/#about", label: "About" },
+  { href: "/#experience", label: "Experience" },
+  { href: "/#projects", label: "Projects" },
+  { href: "/#skills", label: "Skills" },
+  { href: "/#contact", label: "Contact" },
   { href: "/blog", label: "Blog" },
 ];
 
@@ -27,15 +27,25 @@ const Header: React.FC = () => {
             Muhammad Hamza Asad
           </div>
           <div className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-gray-600 hover:text-blue-600 transition-colors duration-300"
-              >
-                {item.label}
-              </a>
-            ))}
+            {navItems.map((item) =>
+              item.label === "Blog" ? (
+                <button
+                  key={item.href}
+                  onClick={() => navigate(item.href)}
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-300"
+                >
+                  {item.label}
+                </button>
+              ) : (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="text-gray-600 hover:text-blue-600 transition-colors duration-300"
+                >
+                  {item.label}
+                </a>
+              )
+            )}
           </div>
           <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
