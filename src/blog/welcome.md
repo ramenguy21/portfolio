@@ -1,5 +1,5 @@
 ---
-title: About whatever this is
+title: About the site.
 date: 2025-06-11
 ---
 
