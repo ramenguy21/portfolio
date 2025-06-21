@@ -1,6 +1,7 @@
 ---
 title: Multiplayer Sequence web game
 date: 2025-06-11
+slug: sequence-web
 ---
 
 Last year, a friend and I were lamenting the lack of multiplayer web games that are easy to access and don’t force you through a tedious sign-up process (seriously, who enjoys those?). On a break from work, I thought, why not try building one myself? Fueled by an inside joke, I started prototyping a Sequence game for the web.

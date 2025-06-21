@@ -1,6 +1,7 @@
 ---
 title: Lost Pet Finders – Building a Community-Driven Pet Recovery Platform
 date: 2025-06-09
+slug: lost-pet-finders
 ---
 
 Losing a pet is stressful, and finding them shouldn’t be harder than it needs to be. That’s the idea behind Lost Pet Finders (LPF): a public service that helps people track down their lost pets using a mix of geotag devices and human-submitted “spots.” Anyone can register as a spotter, and pet owners can quickly search for their missing companions using a simple, Google-style query bar.

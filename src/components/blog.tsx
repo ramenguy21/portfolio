@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { Link } from "react-router-dom";
 import { useBlogPosts } from "../utils/useBlogPosts";
 import remarkGfm from "remark-gfm";
 
@@ -114,12 +115,17 @@ const markdownComponents = {
   ),
 };
 
-const Blog: React.FC = () => {
+type BlogProps = { initialSlug?: string };
+const Blog: React.FC<BlogProps> = ({ initialSlug }) => {
   const posts = useBlogPosts();
-  const [selected, setSelected] = useState<string | null>(null);
+  //const navigate = useNavigate();
+  const [selected, setSelected] = useState<string | null>(initialSlug ?? null);
+
+  useEffect(() => {
+    if (initialSlug) setSelected(initialSlug);
+  }, [initialSlug]);
 
   if (!posts.length) return <div className="text-center py-12">Loading...</div>;
-
   const selectedPost = posts.find((p) => p.slug === selected) || posts[0];
 
   return (
@@ -133,8 +139,9 @@ const Blog: React.FC = () => {
             <ul>
               {posts.map((post) => (
                 <li key={post.slug}>
-                  <button
-                    className={`w-full text-left py-2 px-4 rounded mb-2 ${
+                  <Link
+                    to={`/blog/${post.slug}`}
+                    className={`w-full block text-left py-2 px-4 rounded mb-2 ${
                       selectedPost.slug === post.slug
                         ? "bg-blue-100 text-blue-700 font-bold"
                         : "hover:bg-gray-100"
@@ -143,7 +150,7 @@ const Blog: React.FC = () => {
                   >
                     {post.title}
                     <div className="text-xs text-gray-500">{post.date}</div>
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
