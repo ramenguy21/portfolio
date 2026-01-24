@@ -2,10 +2,6 @@
 @import "@fontsource-variable/inter";
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   html {
     @apply scroll-smooth;
   }
