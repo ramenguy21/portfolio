@@ -88,8 +88,8 @@ const Hero: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg sm:text-xl md:text-2xl text-neutral-400 mb-6"
           >
-            Next.js <span className="text-cyan-400">\u2022</span> GoLang{" "}
-            <span className="text-cyan-400">\u2022</span> AWS/DevOps
+            Next.js <span className="text-cyan-400">•</span> GoLang{" "}
+            <span className="text-cyan-400">•</span> AWS/DevOps
           </motion.p>
 
           <motion.p
