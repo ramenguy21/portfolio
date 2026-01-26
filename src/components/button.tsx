@@ -7,6 +7,7 @@ type ButtonProps = {
   href?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   className?: string;
+  download?: string | boolean;
 };
 
 // Reusable Button Component
@@ -16,6 +17,7 @@ const Button: React.FC<ButtonProps> = ({
   href,
   onClick,
   className = "",
+  download,
 }) => {
   const baseClasses =
     "px-6 py-3 rounded-lg font-medium transition-all duration-200 inline-flex items-center gap-2";
@@ -31,12 +33,14 @@ const Button: React.FC<ButtonProps> = ({
   const classes = `${baseClasses} ${variants[variant]} ${className}`;
 
   if (href) {
+    const isExternal = href.startsWith("http");
     return (
       <a
         href={href}
         className={classes}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={isExternal ? "_blank" : undefined}
+        rel={isExternal ? "noopener noreferrer" : undefined}
+        download={download || undefined}
       >
         {children}
       </a>

@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const navItems = [
+type NavItem = {
+  href: string;
+  label: string;
+  download?: boolean;
+};
+
+const navItems: NavItem[] = [
   { href: "/", label: "Home" },
   { href: "/#about", label: "About" },
   { href: "/#experience", label: "Experience" },
@@ -10,6 +16,7 @@ const navItems = [
   { href: "/#skills", label: "Skills" },
   { href: "/#contact", label: "Contact" },
   { href: "/blog", label: "Blog" },
+  { href: "/m_Hamza_Asad_Resume.pdf", label: "Download CV", download: true },
 ];
 
 const Header: React.FC = () => {
@@ -57,6 +64,7 @@ const Header: React.FC = () => {
                   key={item.href}
                   href={item.href}
                   className="px-4 py-2 text-sm font-medium text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800/50 rounded-lg transition-all duration-200"
+                  download={item.download || undefined}
                 >
                   {item.label}
                 </a>
@@ -78,6 +86,7 @@ const Header: React.FC = () => {
                 href={item.href}
                 className="block py-3 px-4 text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800/50 rounded-lg transition-all duration-200"
                 onClick={() => setIsOpen(false)}
+                download={item.download || undefined}
               >
                 {item.label}
               </a>

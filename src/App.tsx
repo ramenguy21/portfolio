@@ -1,5 +1,12 @@
 import React, { type ReactNode } from "react";
-import { Github, Mail, Phone, Sparkles, ArrowRight } from "lucide-react";
+import {
+  Github,
+  Mail,
+  Phone,
+  Sparkles,
+  ArrowRight,
+  Download,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import Button from "./components/button";
 import ExperienceCard from "./components/exp-card";
@@ -117,6 +124,10 @@ const Hero: React.FC = () => {
             <Button variant="secondary" href="https://github.com/ramenguy21">
               <Github size={20} />
               View My Work
+            </Button>
+            <Button variant="outline" href="/m_Hamza_Asad_Resume.pdf" download>
+              <Download size={20} />
+              Download CV
             </Button>
           </motion.div>
         </div>
