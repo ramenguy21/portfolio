@@ -141,6 +141,22 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ initialSlug }) => {
           Case Studies
         </h2>
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          <main className="lg:w-2/3">
+            <article className="prose prose-invert max-w-none">
+              <div className="mb-8">
+                <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400 mb-2">
+                  {selectedStudy.title}
+                </h1>
+                <p className="text-neutral-500 text-sm">{selectedStudy.date}</p>
+              </div>
+              <ReactMarkdown
+                components={markdownComponents}
+                remarkPlugins={[remarkGfm]}
+              >
+                {selectedStudy.content}
+              </ReactMarkdown>
+            </article>
+          </main>
           <aside className="lg:w-1/3">
             <div className="sticky top-24">
               <ul className="space-y-2">
@@ -166,22 +182,6 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ initialSlug }) => {
               </ul>
             </div>
           </aside>
-          <main className="lg:w-2/3">
-            <article className="prose prose-invert max-w-none">
-              <div className="mb-8">
-                <h1 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400 mb-2">
-                  {selectedStudy.title}
-                </h1>
-                <p className="text-neutral-500 text-sm">{selectedStudy.date}</p>
-              </div>
-              <ReactMarkdown
-                components={markdownComponents}
-                remarkPlugins={[remarkGfm]}
-              >
-                {selectedStudy.content}
-              </ReactMarkdown>
-            </article>
-          </main>
         </div>
       </div>
     </section>

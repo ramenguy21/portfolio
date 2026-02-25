@@ -160,7 +160,7 @@ const Hero: React.FC = () => {
           >
             <Sparkles size={16} className="text-cyan-400" />
             <span className="text-sm text-cyan-400 font-medium">
-              Senior Full Stack Engineer
+              Full Stack Engineer
             </span>
           </motion.div>
 
@@ -179,11 +179,18 @@ const Hero: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-6 border-t-2 border-b-2 border-neutral-700/50 py-4"
+            className="mb-6 border-t-2 border-b-2 border-neutral-700/50 py-2"
           >
             <div className="max-w-fit mx-auto">
               <VerticalScroller
-                items={["Next.js", "GoLang", "AWS/DevOps"]}
+                items={[
+                  "Node.js",
+                  "React",
+                  "Python",
+                  "REST APIs",
+                  "GoLang",
+                  "DevOps",
+                ]}
                 displayMs={2000}
               />
             </div>
@@ -279,10 +286,9 @@ const App: React.FC = () => {
           <div className="rounded-2xl border border-neutral-800/50 bg-gradient-to-br from-neutral-900/90 to-neutral-950/90 backdrop-blur-xl p-6 sm:p-8">
             <p className="text-base sm:text-lg text-neutral-400 leading-relaxed text-center">
               I'm a passionate full-stack software engineer with a strong
-              foundation in modern web technologies. Currently pursuing my
-              Bachelor's in Mathematics at Karachi University, I combine
-              analytical thinking with practical development skills to create
-              scalable, user-friendly applications.
+              foundation in modern web technologies. Currently working as a
+              freelancer, I combine analytical thinking with practical
+              development skills to create scalable, user-friendly applications.
             </p>
           </div>
         </motion.div>

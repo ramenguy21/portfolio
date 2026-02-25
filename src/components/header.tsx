@@ -10,10 +10,8 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { href: "/", label: "Home" },
-  { href: "/#about", label: "About" },
   { href: "/#experience", label: "Experience" },
   { href: "/#case-studies", label: "Case Studies" },
-  { href: "/#skills", label: "Skills" },
   { href: "/#contact", label: "Contact" },
   { href: "/blog", label: "Blog" },
   { href: "/m_Hamza_Asad_Resume.pdf", label: "Download CV", download: true },
