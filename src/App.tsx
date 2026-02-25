@@ -1,4 +1,4 @@
-import React, { type ReactNode } from "react";
+import React, { type ReactNode, useEffect, useState } from "react";
 import {
   Github,
   Mail,
@@ -7,12 +7,12 @@ import {
   ArrowRight,
   Download,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Button from "./components/button";
 import ExperienceCard from "./components/exp-card";
-import ProjectCard from "./components/project-card";
 import { BentoGrid } from "./components/bento-grid";
 import { useBlogPosts } from "./utils/useBlogPosts";
+import { useCaseStudies } from "./utils/useCaseStudies";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import { useNavigate } from "react-router-dom";
@@ -47,6 +47,92 @@ const Section: React.FC<SectionProps> = ({
         {children}
       </div>
     </section>
+  );
+};
+
+// One-time, modern typewriter using framer-motion.
+// Uses sessionStorage to ensure the animation runs only once per user session.
+const Typewriter: React.FC<{
+  text: string;
+  className?: string;
+}> = ({ text, className = "" }) => {
+  // animate on every load
+
+  const chars = Array.from(text);
+
+  const parent = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.06 } },
+  };
+
+  const child = {
+    hidden: { opacity: 0, y: 0, scaleX: 0 },
+    visible: { opacity: 1, y: 0, scaleX: 1, transition: { duration: 0.28 } },
+  };
+
+  return (
+    <motion.span
+      className={className}
+      variants={parent}
+      initial="hidden"
+      animate="visible"
+    >
+      {chars.map((c, i) => {
+        const ch = c === " " ? "\u00A0" : c;
+        return (
+          <motion.span
+            key={i}
+            variants={child}
+            className="inline-block"
+            style={{ transformOrigin: "left" }}
+          >
+            {ch}
+          </motion.span>
+        );
+      })}
+    </motion.span>
+  );
+};
+
+// Vertical scroller: cycles through items by sliding each item from below, showing it, then sliding up.
+const VerticalScroller: React.FC<{
+  items: string[];
+  className?: string;
+  displayMs?: number;
+}> = ({ items, className = "", displayMs = 2000 }) => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((i) => (i + 1) % items.length);
+    }, displayMs + 500); // allow animation time
+    return () => clearInterval(interval);
+  }, [items.length, displayMs]);
+
+  const variants = {
+    enter: { y: 20, opacity: 0 },
+    center: { y: 0, opacity: 1 },
+    exit: { y: -20, opacity: 0 },
+  } as const;
+
+  return (
+    <div
+      className={`h-8 overflow-hidden flex items-center justify-center ${className}`}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={index}
+          variants={variants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.45 }}
+          className="inline-flex items-center text-lg sm:text-xl md:text-2xl text-neutral-400"
+        >
+          <span>{items[index]}</span>
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 };
 
@@ -85,19 +171,23 @@ const Hero: React.FC = () => {
             className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6"
           >
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-100 via-neutral-200 to-neutral-100">
-              Muhammad Hamza Asad
+              <Typewriter text="Muhammad Hamza Asad" />
             </span>
           </motion.h1>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg sm:text-xl md:text-2xl text-neutral-400 mb-6"
+            className="mb-6 border-t-2 border-b-2 border-neutral-700/50 py-4"
           >
-            Next.js <span className="text-cyan-400">•</span> GoLang{" "}
-            <span className="text-cyan-400">•</span> AWS/DevOps
-          </motion.p>
+            <div className="max-w-fit mx-auto">
+              <VerticalScroller
+                items={["Next.js", "GoLang", "AWS/DevOps"]}
+                displayMs={2000}
+              />
+            </div>
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -139,6 +229,7 @@ const Hero: React.FC = () => {
 // Main Portfolio Component
 const App: React.FC = () => {
   const posts = useBlogPosts();
+  const studies = useCaseStudies();
   const navigate = useNavigate();
 
   const experiences = [
@@ -169,24 +260,6 @@ const App: React.FC = () => {
         "GoLang",
         "WordPress",
       ],
-    },
-  ];
-
-  const projects = [
-    {
-      title: "Huffman Encoding Image Compression",
-      description:
-        "Used the Python Imaging Library (PIL) to read and manipulate image data and store it in a Huffman tree for efficient compression.",
-      technologies: ["Python", "PIL", "Data Structures", "Algorithms"],
-      impact: "70% file size reduction",
-    },
-    {
-      title: "Kitab Ghar Website",
-      description:
-        "Developed a low-cost ticketing system for a community library, ensuring code readability and open-sourcing the project.",
-      technologies: ["TypeScript", "Tailwind CSS", "Netlify"],
-      link: "#",
-      impact: "Serving 500+ library members",
     },
   ];
 
@@ -223,11 +296,39 @@ const App: React.FC = () => {
         </div>
       </Section>
 
-      <Section id="projects" title="Featured Projects">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-6xl mx-auto">
-          {projects.map((project, index) => (
-            <ProjectCard key={index} {...project} />
-          ))}
+      <Section id="case-studies" title="Case Studies">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {studies.map((study, index) => (
+              <motion.div
+                key={study.slug}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                className="group rounded-2xl border border-neutral-800/50 bg-gradient-to-br from-neutral-900/90 to-neutral-950/90 backdrop-blur-xl p-6 hover:border-cyan-500/30 transition-all duration-300 cursor-pointer"
+                onClick={() => navigate(`/case-study/${study.slug}`)}
+              >
+                <div className="flex flex-col h-full">
+                  <div className="flex flex-col gap-2 mb-3 flex-1">
+                    <h3 className="text-lg sm:text-xl font-bold text-neutral-100 group-hover:text-cyan-400 transition-colors duration-300">
+                      {study.title}
+                    </h3>
+                    <span className="text-xs text-neutral-500 whitespace-nowrap">
+                      {study.date}
+                    </span>
+                  </div>
+                  <p className="text-neutral-400 text-sm line-clamp-3">
+                    {study.content
+                      .split("\n")
+                      .find((line) => line.trim() && !line.startsWith("#"))
+                      ?.slice(0, 150)}
+                    ...
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </Section>
 
