@@ -344,7 +344,7 @@ const App: React.FC = () => {
         </div>
       </Section>
 
-      <Section id="contact" title="Get In Touch">
+      {/**<Section id="contact" title="Get In Touch">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -391,7 +391,7 @@ const App: React.FC = () => {
             </div>
           </motion.div>
         </div>
-      </Section>
+      </Section>**/}
 
       <Section id="blog-preview" title="Latest Blog Posts">
         <div className="max-w-3xl mx-auto">
