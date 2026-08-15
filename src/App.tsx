@@ -2,7 +2,6 @@ import React, { type ReactNode, useEffect, useState } from "react";
 import {
   Github,
   Mail,
-  Phone,
   Sparkles,
   ArrowRight,
   Download,
