@@ -1,19 +1,23 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import Header from "../components/header";
-import Footer from "../components/footer";
-import CaseStudy from "../components/case-study";
+import PageFrame from "../components/page-frame";
+import Archive from "../components/archive";
+import { useCaseStudies } from "../utils/useCaseStudies";
 
 const CaseStudyPage: React.FC = () => {
   const { slug } = useParams();
+  const studies = useCaseStudies();
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
-      <main className="flex-1 flex flex-col">
-        <CaseStudy initialSlug={slug} />
-      </main>
-      <Footer />
-    </div>
+    <PageFrame>
+      <Archive
+        label="Case studies"
+        basePath="/case-study"
+        items={studies}
+        initialSlug={slug}
+        indexDate="monthYear"
+      />
+    </PageFrame>
   );
 };
 

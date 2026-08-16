@@ -1,20 +1,144 @@
 @import "tailwindcss";
-@import "@fontsource-variable/inter";
+
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+@import "@fontsource/instrument-serif/400.css";
+@import "@fontsource/instrument-serif/400-italic.css";
+
+@theme {
+  /* Paper */
+  --color-paper: #f4f1ea;
+  --color-paper-hover: #efebe1;
+  --color-paper-shade: #e4e0d5;
+
+  /* Ink */
+  --color-ink: #16150f;
+  --color-ink-muted: #57544d;
+  --color-ink-faint: #8b877f;
+
+  /* Rules */
+  --color-rule: #d6d2c7;
+  --color-rule-faint: #b3aea3;
+  --color-rule-dark: #4a483f;
+
+  /* The one accent. Four appearances per page, at most. */
+  --color-accent: oklch(0.55 0.17 35);
+
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-serif: "Instrument Serif", ui-serif, serif;
+
+  /* Single-column breakpoint, per the responsive spec. */
+  --breakpoint-desk: 900px;
+
+  /* Square corners are load-bearing to the concept: remove the utilities. */
+  --radius-*: initial;
+
+  /* No shadows anywhere either. */
+  --shadow-*: initial;
+
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-pulse-dot: pulse-dot 2.4s infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
 
 @layer base {
   html {
-    @apply scroll-smooth;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Page gutter scales with the viewport now that content runs edge to edge.
+     28px is the design width value; it only grows on wider screens. */
+  :root {
+    --gutter: 28px;
+  }
+
+  @media (min-width: 900px) {
+    :root {
+      --gutter: 40px;
+    }
+  }
+
+  @media (min-width: 1400px) {
+    :root {
+      --gutter: 64px;
+    }
+  }
+
+  @media (min-width: 1800px) {
+    :root {
+      --gutter: 88px;
+    }
   }
 
   body {
-    @apply bg-neutral-950 text-neutral-100;
-    font-family:
-      "Inter Variable",
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      sans-serif;
-    font-feature-settings: "cv11", "ss01";
-    font-variation-settings: "opsz" 32;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 15.5px;
+    line-height: 1.75;
+    text-rendering: optimizeLegibility;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Required for ship: every interactive element gets the accent ring. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-paper);
+  }
+}
+
+/* The page gutter, as one utility so every block stays in register. */
+@utility gutter {
+  padding-inline: var(--gutter);
+}
+
+/* Placeholder fill for screenshot slots awaiting a real image. */
+@utility stripe {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--color-paper-shade) 0 8px,
+    var(--color-paper) 8px 16px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-marquee,
+  .animate-pulse-dot {
+    animation: none;
   }
 }

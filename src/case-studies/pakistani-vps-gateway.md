@@ -1,64 +1,65 @@
 ---
 title: Pakistani VPS Gateway
-date: 2025-06-10
+date: 2021-12-09
 slug: pakistani-vps-gateway
+order: 4
+year: "2021"
+stack: "Temporal · Go · NestJS — Elphinstone"
+blurb: "A voluntary pension scheme delivered as a third-party service: employees track portfolio status and risk appetite while an ops dashboard handles verification and member mutations. SECP-mandated KYC modelled as a durable workflow."
+caption: "kyc workflow states"
+tags: [Fintech, Pension, SECP, B2B/B2C]
 ---
 
 ## Overview
 
-The B2B/B2C VPS product was a gateway for registered companies in Pakistan to provide a voluntary pension scheme to their employees as a third-party service. It was an application that allowed employees of onboarded companies to log in to view their portfolio status, manage their risk appetite, and more. Administrative users were correlated to members of our Operations team. They were responsible for managing mutations to the employee list. Editing their details, checking manual verifications, and so on. This functionality was contained within the Admin Dashboard. The B2C functionality managed individuals who had signed up for a VPS on their own accord; it shared functionality with the B2B dashboard.
+The VPS product was a gateway for registered companies in Pakistan to provide a voluntary pension scheme to their employees as a third-party service. Employees of onboarded companies could log in to view their portfolio status and manage their risk appetite. Administrative users — members of the internal Operations team — managed employee records, manual verifications, and approvals through a dedicated Admin Dashboard. B2C functionality served individuals who signed up independently and shared the same core dashboard.
 
 ## Tech Stack
 
-- **Backend:** NestJS
-- **Frontend:** React + Vite
-- **Integration Services:** Temporal + GoLang
-- **Deployment:** AWS ECS (staging → prod environment)
+- NestJS (Backend API)
+- React + Vite (Frontend)
+- Temporal + GoLang (Integration services)
+- MongoDB
+- AWS ECS (staging → prod)
+- GitHub Actions (CI/CD)
+- Docker + ECR
 
 ## Key Challenges
 
-### The KYC Process
+### 01 — KYC State Machine
 
-This was, unarguably, the most involved part of the onboarding process. As part of the regulatory requirements set forth by SECP, we had to verify four statuses for each onboarding:
+SECP regulatory requirements mandated four sequential verifications per onboarding: AML/CFT (finance blacklist), MSISDN (phone number against CNIC), NADRA (CNIC scan matching), and IBFT (bank account validity). Pakistani third-party APIs had notoriously unreliable uptime, and each check had to complete before the next could begin — making standard exponential-backoff retry strategies unviable.
 
-- **AML/CFT Status** - Finance blacklist verification
-- **MSISDN Verification** - Whether their provided phone numbers were registered against their provided CNIC
-- **NADRA Verification** - Whether their submitted CNIC scans matched their submitted details
-- **IBFT Verification** - Whether their provided bank account was valid and active
+**The Solution.** The process was modelled as a Temporal state machine. A GoLang workflow spawned each verification as an asynchronous Activity. Temporal tracked state across the entire workflow, resuming automatically after API outages without data loss. On a successful response, the result was persisted to a MongoDB verification collection that also served as the compliance source of truth.
 
-As is the case if one has ever worked with Pakistani APIs, the services used to conduct these status checks had unreliable uptime. The business process required each check to finish before the next could be started. Hence, a traditional approach with exponential backoff on request retries was not applicable here.
+### 02 — Asset Allocation Engine
 
-**The Solution**
+Users could modify their asset allocation based on risk appetite — e.g., shifting from High Risk to Conservative. A single user action on the frontend triggered a complete portfolio recalculation and net asset value readjustment across all holdings.
 
-The process was treated as a state machine. We wrote a workflow in GoLang that spawned each verification as an asynchronous Activity (think of these as function calls). The Temporal instance was responsible for keeping track of the workflow and all of the associated activities. Upon a successful verification (defined by whether the third-party API returned a valid response), it would store the verification result in the Mongo database. This Mongo database hosted a collection of verification documents, which also served as the source of truth for compliance.
+**The Solution.** A recalculation engine triggered on-demand, reconciling the user's current holdings against the latest fund prices. All operations associated with the user were locked until recalculations completed, preventing race conditions against concurrent portfolio mutations.
 
-### Asset Allocation
+### 03 — Multistep Onboarding Flow
 
-An authenticated user would be allowed to modify their asset allocation based on their risk appetite (e.g., moving from High Risk to Conservative). One and done on their end, a complete portfolio recalculation and net asset value readjustment on our end.
+The signup process averaged 15–20 minutes across three major forms: Personal, Company, and Signatures. The system needed to track where users dropped off and prefill completed fields when they returned.
 
-**The Solution**
+**The Solution.** State was accumulated via exposed handlers from the `useFormik()` hook. A custom file input component cached uploaded files on the backend and restored them on subsequent sessions. The entire flow was covered by Jest unit tests and Puppeteer end-to-end tests.
 
-We developed a recalculation engine that triggered on-demand. It reconciled the user's current holdings against the latest fund prices, locking all associated operations with the user until the recalculations were complete.
+### 04 — Pro-Rata Payout Algorithm
 
-### Multistep Onboarding Flow
+Company-wide fund distribution required programmatic allocation of the total stock value held by a company across its entire employee base, respecting each employee's individual Asset Profile down to the decimal point.
 
-The signup process took around 15-20 minutes to complete on average. We needed a way to track where the user had dropped off during their signup. Three major forms had to be filled out: Personal, Company, and Signatures. For every field that was submitted and saved, we needed to prefill the fields the next time they landed on signup.
+**The Solution.** The algorithm factored in each employee's Asset Profile, ensuring allocations cleared mathematically across hundreds of accounts simultaneously. Each distribution output doubled as an immutable audit log for the Operations team.
 
-**The Solution**
+### 05 — CI/CD Pipeline
 
-We heavily utilized exposed handlers through the `useFormik()` hook and wrote a custom file input component, which would cache the files on our backend and fetch them when the user returned to complete the onboarding flow. The logic was robust and tested with Jest and Puppeteer.
+Deployments needed to be fully automated across staging and production environments with no manual steps.
 
-### Payout Algorithm
-
-To handle the distribution of company-wide funds, we developed a pro-rata allocation algorithm. This system took the total stock value held by a company and programmatically distributed it across the employee base. It factored in the specific Asset Profile of each employee, ensuring the math cleared down to the decimal point across hundreds of accounts. These also doubled as audit logs for the Operations team.
-
-### CI/CD Pipeline
-
-This was managed through GitHub Actions. A push to the relevant (staging, main) branch kicked off the workflow, which created the Docker image and pushed it to ECR. The corresponding ECR image was then containerized, tagged, and deployed onto ECS.
+**The Solution.** GitHub Actions triggered on push to the staging and main branches respectively. Each run built a Docker image, pushed it to ECR, then containerised, tagged, and deployed the image to the corresponding ECS environment.
 
 ## Impact & Reflection
 
-While the product was ultimately sunset due to a strategic pivot at the executive level, the technical foundation was still a success.
+The product was ultimately sunset following a strategic pivot at the executive level. The technical foundation, however, remained a success.
 
-- **Zero Data Loss:** Despite the questionable reliability of external APIs, the Temporal integration ensured 100% KYC completion during onboarding.
-- **Operational Efficiency:** The Admin Dashboard allowed the Ops team to manage manual verifications and payouts without developer intervention, reducing overhead by roughly 40%.
+**Zero Data Loss.** Despite the unreliable uptime of external Pakistani APIs, the Temporal integration ensured 100% KYC completion across all onboarding attempts.
+
+**Operational Efficiency.** The Admin Dashboard enabled the Ops team to manage manual verifications and payouts without developer intervention, reducing overhead by roughly 40%.

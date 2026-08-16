@@ -4,6 +4,7 @@ import fm from "front-matter";
 export type BlogPost = {
   slug: string;
   title: string;
+  /** ISO string; format at the point of display. */
   date: string;
   content: string;
 };
@@ -30,7 +31,7 @@ export function useBlogPosts() {
           slug,
           title: attributes.title || slug,
           date: attributes.date
-            ? new Date(attributes.date).toLocaleDateString()
+            ? new Date(attributes.date).toISOString()
             : "",
           content: body,
         } as BlogPost;

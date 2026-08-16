@@ -1,99 +1,120 @@
-import React, { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { navItems, site, type NavItem } from "../data/site";
 
-type NavItem = {
-  href: string;
-  label: string;
-  download?: boolean;
+const linkPropsFor = (item: NavItem, onHome: boolean) => {
+  if (item.href) {
+    const external = item.href.startsWith("http");
+    return {
+      href: item.href,
+      ...(item.download ? { download: true } : {}),
+      ...(external ? { target: "_blank", rel: "noopener noreferrer" } : {}),
+    };
+  }
+  if (item.hash) return { href: onHome ? item.hash : `/${item.hash}` };
+  return {};
 };
 
-const navItems: NavItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/#experience", label: "Experience" },
-  { href: "/#case-studies", label: "Case Studies" },
-  { href: "/#contact", label: "Contact" },
-  { href: "/blog", label: "Blog" },
-  { href: "/m_Hamza_Asad_Resume.pdf", label: "Download CV", download: true },
-];
+const Masthead: React.FC = () => {
+  const { pathname, hash } = useLocation();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-const Header: React.FC = () => {
-  const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const onHome = pathname === "/";
+  const isActive = (item: NavItem) => {
+    if (item.to) return pathname.startsWith(item.to);
+    if (item.hash) return onHome && (hash || "#work") === item.hash;
+    return false;
+  };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+  const navClass = (active: boolean) =>
+    [
+      "border-b pb-[2px] transition-colors",
+      active ? "border-ink" : "border-transparent hover:border-ink",
+    ].join(" ");
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const renderNavItem = (
+    item: NavItem,
+    className: string,
+    onClick?: () => void,
+  ) =>
+    item.to ? (
+      <Link key={item.label} to={item.to} className={className} onClick={onClick}>
+        {item.label}
+      </Link>
+    ) : (
+      <a
+        key={item.label}
+        {...linkPropsFor(item, onHome)}
+        className={className}
+        onClick={onClick}
+      >
+        {item.label}
+      </a>
+    );
 
   return (
-    <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-neutral-950/95 backdrop-blur-xl border-b border-neutral-800/50 shadow-lg shadow-black/10"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
-          <div
-            onClick={() => navigate("/")}
-            className="font-bold text-lg sm:text-xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400 cursor-pointer hover:from-cyan-300 hover:to-emerald-300 transition-all duration-300"
+    <header>
+      {/* Masthead strip */}
+      <div className="flex items-center justify-between border-b border-ink gutter py-3 font-mono text-[11px] tracking-[0.16em] uppercase">
+        <span>{site.masthead.location}</span>
+        <span className="hidden sm:block">{site.masthead.tenure}</span>
+        <span className="flex items-center gap-2">
+          <span
+            aria-hidden
+            className="block h-[6px] w-[6px] animate-pulse-dot rounded-full bg-accent"
+          />
+          {site.masthead.availability}
+        </span>
+      </div>
+
+      {/* Name bar */}
+      <div className="border-b-[3px] border-double border-ink gutter pt-[22px] pb-[18px]">
+        <div className="flex flex-col items-start gap-4 desk:flex-row desk:items-end desk:justify-between desk:gap-10">
+          <Link
+            to="/"
+            className="font-display text-[26px] leading-none font-extrabold tracking-[-0.03em] desk:text-[34px]"
           >
-            Muhammad Hamza Asad
-          </div>
-          <div className="hidden md:flex items-center gap-2">
+            {site.name}
+          </Link>
+
+          <nav
+            aria-label="Primary"
+            className="hidden gap-[26px] font-mono text-[12px] tracking-[0.1em] uppercase desk:flex"
+          >
             {navItems.map((item) =>
-              item.label === "Blog" ? (
-                <button
-                  key={item.href}
-                  onClick={() => navigate(item.href)}
-                  className="px-4 py-2 text-sm font-medium text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800/50 rounded-lg transition-all duration-200"
-                >
-                  {item.label}
-                </button>
-              ) : (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="px-4 py-2 text-sm font-medium text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800/50 rounded-lg transition-all duration-200"
-                  download={item.download || undefined}
-                >
-                  {item.label}
-                </a>
-              ),
+              renderNavItem(item, navClass(isActive(item))),
             )}
-          </div>
+          </nav>
+
           <button
-            className="md:hidden text-neutral-300 hover:text-cyan-400 transition-colors duration-200"
-            onClick={() => setIsOpen(!isOpen)}
+            type="button"
+            aria-expanded={mobileNavOpen}
+            onClick={() => setMobileNavOpen((open) => !open)}
+            className="-mx-2 flex h-11 items-center px-2 font-mono text-[12px] tracking-[0.1em] uppercase desk:hidden"
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            <span className="border-b border-ink pb-[2px]">
+              {mobileNavOpen ? "Close" : "Menu"}
+            </span>
           </button>
         </div>
-        {isOpen && (
-          <div className="md:hidden py-4 border-t border-neutral-800/50">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="block py-3 px-4 text-neutral-300 hover:text-cyan-400 hover:bg-neutral-800/50 rounded-lg transition-all duration-200"
-                onClick={() => setIsOpen(false)}
-                download={item.download || undefined}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
+
+        {mobileNavOpen && (
+          <nav
+            aria-label="Primary"
+            className="mt-4 flex flex-col border-t border-rule font-mono text-[13px] tracking-[0.1em] uppercase desk:hidden"
+          >
+            {navItems.map((item) =>
+              renderNavItem(
+                item,
+                "flex min-h-[44px] items-center border-b border-rule",
+                () => setMobileNavOpen(false),
+              ),
+            )}
+          </nav>
         )}
       </div>
-    </nav>
+    </header>
   );
 };
 
-export default Header;
+export default Masthead;
